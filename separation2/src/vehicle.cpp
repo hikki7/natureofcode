@@ -16,7 +16,7 @@ vehicle::vehicle(float x,float y){
     maxForce=0.2;
     acceleration=vec2(0,0);
     velocity=vec2(0,0);
-    r=30;
+    r=10;
 }
 
 vehicle::~vehicle(){
@@ -27,7 +27,30 @@ void vehicle::addForce(vec2 _force){
     acceleration+=_force;
 }
 
-void vehicle::separate(vector<unique_ptr<vehicle>>& vehicles){
+void vehicle::applyBehaviors(vector<unique_ptr<vehicle>>& vehicles){
+    vec2 separateForce=separate(vehicles);
+    vec2 seekForce=seek(vec2(ofGetMouseX(),ofGetMouseY()));
+    separateForce*=5;
+    addForce(separateForce);
+    addForce(seekForce);
+}
+
+
+vec2 vehicle::seek(vec2 target){
+    vec2 desired=target-location;
+    desired=normalize(desired);
+    desired*=maxSpeed;;
+    
+    vec2 steer=desired-velocity;
+    if(length(steer)>maxForce){
+        steer=normalize(steer);
+        steer*=maxForce;
+    }
+    
+    return steer;
+}
+
+vec2 vehicle::separate(vector<unique_ptr<vehicle>>& vehicles){
     float desiredseparation=2*r;//近すぎないかの基準
     vec2 sum=vec2(0,0);
     int count=0;
@@ -42,16 +65,7 @@ void vehicle::separate(vector<unique_ptr<vehicle>>& vehicles){
             count++;
         }
     }
-    
-    if(count>0){
-        sum=normalize(sum);
-        vec2 steer=sum-this->velocity;
-        if(length(steer)>maxForce){
-            steer=normalize(steer);
-            steer*=maxForce;
-        }
-        addForce(steer);
-    }
+    return sum;
 }
 
 void vehicle::update(){

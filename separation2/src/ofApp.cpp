@@ -5,7 +5,7 @@ void ofApp::setup(){
     ofSetFullscreen(true);
     ofBackground(0);
     
-    for(int i=0;i<200;i++){
+    for(int i=0;i<100;i++){
         auto v=make_unique<vehicle>(ofRandom(ofGetWidth()),ofRandom(ofGetHeight()));
         this->vehicles.push_back(move(v));
     }
@@ -15,7 +15,7 @@ void ofApp::setup(){
 //--------------------------------------------------------------
 void ofApp::update(){
     for (auto& v : vehicles) {
-        v->separate(vehicles);
+        v->applyBehaviors(vehicles);
         v->update();
         v->borders();
     }

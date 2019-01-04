@@ -20,7 +20,9 @@ public:
     vehicle(float x,float y);
     ~vehicle();
     void addForce(vec2 _force);
-    void separate(vector<unique_ptr<vehicle>>& vehicles);
+    void applyBehaviors(vector<unique_ptr<vehicle>>& vehicles);
+    vec2 seek(vec2 target);
+    vec2 separate(vector<unique_ptr<vehicle>>& vehicles);
     void update();
     void display();
     void borders();
